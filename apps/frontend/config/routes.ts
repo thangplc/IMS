@@ -53,11 +53,10 @@ export const PROTECTED_ROUTES = {
  */
 export const API_ROUTES = {
   // Auth
-  LOGIN: '/api/auth/login',
-  LOGOUT: '/api/auth/logout',
-  REGISTER: '/api/auth/register',
-  REFRESH: '/api/auth/refresh',
-  ME: '/api/auth/me',
+  LOGIN: '/auth/login',
+  LOGOUT: '/auth/logout',
+  REGISTER: '/auth/register',
+  ME: '/auth/me',
   
   // Products
   PRODUCTS: '/api/products',

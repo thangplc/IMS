@@ -1,41 +1,16 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
 import { User } from '@/types'
-import { AUTH_CONFIG } from '@/config'
 
 interface AuthState {
   user: User | null
-  token: string | null
-  _hasHydrated: boolean
-  setHasHydrated: (state: boolean) => void
-  setAuth: (user: User, token: string) => void
+  setAuth: (user: User) => void
   logout: () => void
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      _hasHydrated: false,
-      setHasHydrated: (state) => {
-        set({ _hasHydrated: state })
-      },
-      setAuth: (user, token) => {
-        localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token)
-        set({ user, token })
-      },
-      logout: () => {
-        localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY)
-        set({ user: null, token: null })
-      },
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true)
-      },
-    }
-  )
-)
+// Store only user in memory (no token, no persistence)
+// Token is managed by HTTP-only cookie
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  setAuth: (user) => set({ user }),
+  logout: () => set({ user: null }),
+}))

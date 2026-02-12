@@ -80,15 +80,10 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
       setErrorState(null);
       setFieldErrors({});
 
-      // Short delay for persist middleware to save to localStorage
+      // Redirect to dashboard (cookie already set by backend)
       setTimeout(() => {
-        console.log("🔄 Redirecting to dashboard...");
-        console.log(
-          "📍 Current localStorage:",
-          localStorage.getItem("auth-storage"),
-        );
         window.location.href = "/dashboard";
-      }, 800);
+      }, 500);
     } catch (error: unknown) {
       // Parse error using utility
       const parsedError = parseError(error);

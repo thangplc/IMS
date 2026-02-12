@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthStore } from '@/store/auth-store'
 import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Loading } from '@/components/ui/loading'
 import { MESSAGES } from '@/constants/messages'
+import api from '@/lib/api'
 
 export default function DashboardLayout({
   children,
@@ -13,30 +14,38 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const user = useAuthStore((state) => state.user)
-  const hasHydrated = useAuthStore((state) => state._hasHydrated)
+  const setAuth = useAuthStore((state) => state.setAuth)
+  const [isLoading, setIsLoading] = useState(true)
 
-  console.log('📊 Dashboard layout state:', { hasHydrated, user: user?.name })
-
-  // Protect routes - redirect to login if not authenticated
+  // Check session on mount (cookie-based auth)
   useEffect(() => {
-    console.log('🔍 Dashboard useEffect:', { hasHydrated, hasUser: !!user })
-    
-    // Only check after Zustand has hydrated from localStorage
-    if (hasHydrated && !user) {
-      console.log('❌ No user found after hydration, redirecting to login...')
-      console.log('📍 localStorage:', localStorage.getItem('auth-storage'))
-      window.location.href = '/login'
-    } else if (hasHydrated && user) {
-      console.log('✅ User authenticated:', user)
+    async function checkSession() {
+      try {
+        // Try to get user info (cookie sent automatically)
+        const { data } = await api.get('/auth/me')
+        setAuth(data)
+      } catch (error) {
+        // No valid session - redirect to login
+        window.location.href = '/login'
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }, [hasHydrated, user])
 
-  // Show loading while waiting for hydration
-  if (!hasHydrated) {
+    // If no user in state, check session
+    if (!user) {
+      checkSession()
+    } else {
+      setIsLoading(false)
+    }
+  }, [])
+
+  // Show loading while checking session
+  if (isLoading) {
     return <Loading fullscreen text={MESSAGES.LOADING.DEFAULT} size="lg" />
   }
 
-  // After hydration, if no user, return null (useEffect will redirect)
+  // If no user after check, return null (useEffect will redirect)
   if (!user) {
     return null
   }

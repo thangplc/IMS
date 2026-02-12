@@ -14,10 +14,10 @@ import { LABELS } from '@/constants/labels'
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const user = useAuthStore((state) => state.user)
-  const logout = useLogout()
+  const logoutMutation = useLogout()
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync()
   }
 
   if (!user) return null

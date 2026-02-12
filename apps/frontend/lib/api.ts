@@ -1,41 +1,27 @@
 import axios from 'axios'
-import { API_CONFIG, AUTH_CONFIG } from '@/config'
+import { API_CONFIG } from '@/config'
 
 const api = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
+  withCredentials: true, // Important: send cookies with requests
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY)
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
-
 // Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Only redirect to login on 401 if user is already logged in (has token)
-    // Don't redirect on login page itself
+    // On 401, redirect to login (except if already on login page)
     if (error.response?.status === 401) {
-      const token = localStorage.getItem('token')
       const isLoginPage = window.location.pathname === '/login'
       
-      // Only redirect if user has token (authenticated) and not on login page
-      if (token && !isLoginPage) {
-        localStorage.removeItem('token')
+      if (!isLoginPage) {
+        // Clear user state
+        const { useAuthStore } = require('@/store/auth-store')
+        useAuthStore.getState().logout()
         window.location.href = '/login'
       }
     }
