@@ -6,7 +6,8 @@ import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Loading } from '@/components/ui/loading'
 import { MESSAGES } from '@/constants/messages'
-import api from '@/lib/api'
+import { apiClient } from '@/lib/api-client'
+import { User } from '@/types'
 
 export default function DashboardLayout({
   children,
@@ -20,16 +21,17 @@ export default function DashboardLayout({
   // Check session on mount (cookie-based auth)
   useEffect(() => {
     async function checkSession() {
-      try {
-        // Try to get user info (cookie sent automatically)
-        const { data } = await api.get('/auth/me')
-        setAuth(data)
-      } catch (error) {
+      // Try to get user info (cookie sent automatically)
+      const { data, error } = await apiClient.get<User>('/auth/me')
+      
+      if (error || !data) {
         // No valid session - redirect to login
         window.location.href = '/login'
-      } finally {
-        setIsLoading(false)
+      } else {
+        setAuth(data)
       }
+      
+      setIsLoading(false)
     }
 
     // If no user in state, check session
@@ -38,7 +40,7 @@ export default function DashboardLayout({
     } else {
       setIsLoading(false)
     }
-  }, [])
+  }, [user, setAuth])
 
   // Show loading while checking session
   if (isLoading) {
