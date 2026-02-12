@@ -3,15 +3,25 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
-  Package,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  History,
-  BarChart3,
-  Users,
-  QrCode,
-} from 'lucide-react'
+  Squares2X2Icon,
+  CubeIcon,
+  ArrowDownTrayIcon,
+  ArrowUpTrayIcon,
+  ClockIcon,
+  ChartBarIcon,
+  UsersIcon,
+  QrCodeIcon,
+} from '@heroicons/react/24/outline'
+import {
+  Squares2X2Icon as Squares2X2IconSolid,
+  CubeIcon as CubeIconSolid,
+  ArrowDownTrayIcon as ArrowDownTrayIconSolid,
+  ArrowUpTrayIcon as ArrowUpTrayIconSolid,
+  ClockIcon as ClockIconSolid,
+  ChartBarIcon as ChartBarIconSolid,
+  UsersIcon as UsersIconSolid,
+  QrCodeIcon as QrCodeIconSolid,
+} from '@heroicons/react/24/solid'
 import { useAuthStore } from '@/store/auth-store'
 import { cn } from '@/lib/utils'
 import { Role } from '@/types'
@@ -20,49 +30,57 @@ const navigation = [
   {
     name: 'Dashboard',
     href: '/dashboard',
-    icon: LayoutDashboard,
+    icon: Squares2X2Icon,
+    iconSolid: Squares2X2IconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
   {
     name: 'Sản phẩm',
     href: '/products',
-    icon: Package,
+    icon: CubeIcon,
+    iconSolid: CubeIconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
   {
     name: 'Nhập kho',
     href: '/inventory/stock-in',
-    icon: ArrowDownToLine,
+    icon: ArrowDownTrayIcon,
+    iconSolid: ArrowDownTrayIconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
   {
     name: 'Xuất kho',
     href: '/inventory/stock-out',
-    icon: ArrowUpFromLine,
+    icon: ArrowUpTrayIcon,
+    iconSolid: ArrowUpTrayIconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
   {
     name: 'Lịch sử',
     href: '/inventory/history',
-    icon: History,
+    icon: ClockIcon,
+    iconSolid: ClockIconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
   {
     name: 'Báo cáo',
     href: '/reports',
-    icon: BarChart3,
+    icon: ChartBarIcon,
+    iconSolid: ChartBarIconSolid,
     roles: [Role.ADMIN, Role.MANAGER],
   },
   {
     name: 'Quản lý User',
     href: '/users',
-    icon: Users,
+    icon: UsersIcon,
+    iconSolid: UsersIconSolid,
     roles: [Role.ADMIN],
   },
   {
     name: 'Scan QR',
     href: '/scan',
-    icon: QrCode,
+    icon: QrCodeIcon,
+    iconSolid: QrCodeIconSolid,
     roles: [Role.ADMIN, Role.MANAGER, Role.STAFF],
   },
 ]
@@ -80,10 +98,10 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
-            <Package className="h-5 w-5" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg">
+            <CubeIconSolid className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold">IMS</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">IMS</span>
         </Link>
       </div>
 
@@ -91,17 +109,17 @@ export function Sidebar() {
       <nav className="flex-1 space-y-1 px-3 py-4">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href
-          const Icon = item.icon
+          const Icon = isActive ? item.iconSolid : item.icon
 
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                 isActive
-                  ? 'bg-primary text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
               )}
             >
               <Icon className="h-5 w-5" />
