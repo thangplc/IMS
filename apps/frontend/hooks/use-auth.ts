@@ -8,11 +8,20 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (data: LoginRequest) => {
+      console.log('🔐 Calling login API...')
       const response = await api.post<LoginResponse>('/auth/login', data)
+      console.log('📦 Login response:', response.data)
       return response.data
     },
     onSuccess: (data) => {
+      console.log('💾 Saving to store:', { user: data.user, token: data.accessToken })
       setAuth(data.user, data.accessToken)
+      
+      // Verify save
+      setTimeout(() => {
+        const stored = localStorage.getItem('auth-storage')
+        console.log('✅ Verified localStorage:', stored)
+      }, 100)
     },
   })
 }
