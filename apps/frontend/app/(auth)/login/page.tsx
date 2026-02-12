@@ -9,6 +9,8 @@ import {
   ChartBarIcon,
   CubeTransparentIcon,
 } from "@heroicons/react/24/outline";
+import { MESSAGES } from "@/constants/messages";
+import { TITLES } from "@/constants/titles";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,10 +23,10 @@ export default function LoginPage() {
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Loading Overlay */}
-        {isLoading && (
-          <LoadingOverlay text="Đang xác thực..." size="md" />
-        )}
+          {/* Loading Overlay */}
+          {isLoading && (
+            <LoadingOverlay text={MESSAGES.AUTH.AUTHENTICATING_CREDENTIALS} size="md" />
+          )}
         
         {/* Login Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8">
@@ -43,13 +45,13 @@ export default function LoginPage() {
             {/* Title */}
             <div className="space-y-2">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                IMS
+                {TITLES.APP.NAME}
               </h1>
               <h2 className="text-2xl font-semibold text-gray-900">
-                Đăng nhập vào hệ thống
+                {TITLES.PAGE.LOGIN}
               </h2>
               <p className="text-sm text-gray-600">
-                Inventory Management System
+                {TITLES.APP.FULL_NAME}
               </p>
             </div>
           </div>
@@ -64,19 +66,19 @@ export default function LoginPage() {
                 <div className="flex justify-center">
                   <ShieldCheckIcon className="h-6 w-6 text-blue-600" />
                 </div>
-                <p className="text-xs text-gray-600 font-medium">Bảo mật</p>
+                <p className="text-xs text-gray-600 font-medium">{TITLES.FEATURE.SECURITY}</p>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-center">
                   <ChartBarIcon className="h-6 w-6 text-blue-600" />
                 </div>
-                <p className="text-xs text-gray-600 font-medium">Báo cáo</p>
+                <p className="text-xs text-gray-600 font-medium">{TITLES.FEATURE.REPORTS}</p>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-center">
                   <CubeTransparentIcon className="h-6 w-6 text-blue-600" />
                 </div>
-                <p className="text-xs text-gray-600 font-medium">Theo dõi</p>
+                <p className="text-xs text-gray-600 font-medium">{TITLES.FEATURE.TRACKING}</p>
               </div>
             </div>
           </div>

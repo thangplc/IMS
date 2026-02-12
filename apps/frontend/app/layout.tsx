@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
+import { TITLES } from '@/constants/titles'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin', 'vietnamese'] })
 
 export const metadata: Metadata = {
-  title: 'IMS - Inventory Management System',
-  description: 'Manage your inventory efficiently',
+  title: `${TITLES.APP.NAME} - ${TITLES.APP.FULL_NAME}`,
+  description: TITLES.APP.TAGLINE,
 }
 
 export default function RootLayout({

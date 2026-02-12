@@ -1,3 +1,4 @@
+import { MESSAGES } from '@/constants/messages'
 import { AxiosError } from 'axios'
 
 /**
@@ -35,47 +36,30 @@ export interface AppError {
 }
 
 /**
- * Error messages in Vietnamese
+ * Error messages mapped from constants
  */
-const ERROR_MESSAGES: Record<string, string> = {
-  // Network errors
-  NETWORK_ERROR: 'Không có kết nối internet. Vui lòng kiểm tra mạng của bạn.',
-  NETWORK_TIMEOUT: 'Kết nối quá chậm. Vui lòng thử lại.',
-  
-  // Auth errors (401)
-  UNAUTHORIZED: 'Email hoặc mật khẩu không chính xác.',
-  INVALID_CREDENTIALS: 'Thông tin đăng nhập không hợp lệ.',
-  SESSION_EXPIRED: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
-  
-  // Forbidden (403)
-  FORBIDDEN: 'Bạn không có quyền truy cập tài nguyên này.',
-  ACCOUNT_LOCKED: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
-  ACCOUNT_DISABLED: 'Tài khoản của bạn đã bị vô hiệu hóa.',
-  
-  // Not found (404)
-  NOT_FOUND: 'Không tìm thấy tài nguyên yêu cầu.',
-  RESOURCE_NOT_FOUND: 'Dữ liệu không tồn tại hoặc đã bị xóa.',
-  
-  // Conflict (409)
+const ERROR_MESSAGES = {
+  NETWORK_ERROR: MESSAGES.ERROR.NETWORK_ERROR,
+  NETWORK_TIMEOUT: MESSAGES.ERROR.NETWORK_TIMEOUT,
+  UNAUTHORIZED: MESSAGES.ERROR.INVALID_CREDENTIALS,
+  INVALID_CREDENTIALS: MESSAGES.ERROR.INVALID_CREDENTIALS,
+  SESSION_EXPIRED: MESSAGES.AUTH.SESSION_EXPIRED,
+  FORBIDDEN: MESSAGES.AUTH.UNAUTHORIZED,
+  ACCOUNT_LOCKED: MESSAGES.ERROR.ACCOUNT_LOCKED,
+  ACCOUNT_DISABLED: MESSAGES.ERROR.ACCOUNT_LOCKED,
+  NOT_FOUND: MESSAGES.ERROR.NOT_FOUND,
+  RESOURCE_NOT_FOUND: MESSAGES.ERROR.NOT_FOUND,
   CONFLICT: 'Dữ liệu đã tồn tại. Vui lòng kiểm tra lại.',
   DUPLICATE_ENTRY: 'Thông tin này đã được sử dụng.',
-  
-  // Validation (400)
   BAD_REQUEST: 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.',
   VALIDATION_ERROR: 'Vui lòng kiểm tra các trường đã nhập.',
-  
-  // Rate limit (429)
-  TOO_MANY_REQUESTS: 'Bạn đã thực hiện quá nhiều yêu cầu. Vui lòng đợi ít phút.',
-  RATE_LIMIT_EXCEEDED: 'Bạn đã thử đăng nhập quá nhiều lần. Vui lòng đợi 5 phút.',
-  
-  // Server errors (500+)
-  INTERNAL_SERVER_ERROR: 'Máy chủ đang gặp sự cố. Vui lòng thử lại sau.',
-  SERVICE_UNAVAILABLE: 'Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.',
-  BAD_GATEWAY: 'Không thể kết nối đến máy chủ. Vui lòng thử lại.',
-  
-  // Unknown
-  UNKNOWN_ERROR: 'Đã xảy ra lỗi không xác định. Vui lòng thử lại.',
-}
+  TOO_MANY_REQUESTS: MESSAGES.ERROR.RATE_LIMIT,
+  RATE_LIMIT_EXCEEDED: MESSAGES.ERROR.RATE_LIMIT,
+  INTERNAL_SERVER_ERROR: MESSAGES.ERROR.SERVER_ERROR,
+  SERVICE_UNAVAILABLE: MESSAGES.ERROR.SERVER_ERROR,
+  BAD_GATEWAY: MESSAGES.ERROR.SERVER_ERROR,
+  UNKNOWN_ERROR: MESSAGES.ERROR.UNKNOWN_ERROR,
+} as const
 
 /**
  * Parse Axios error and return structured AppError

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { User } from '@/types'
+import { AUTH_CONFIG } from '@/config'
 
 interface AuthState {
   user: User | null
@@ -21,11 +22,11 @@ export const useAuthStore = create<AuthState>()(
         set({ _hasHydrated: state })
       },
       setAuth: (user, token) => {
-        localStorage.setItem('token', token)
+        localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token)
         set({ user, token })
       },
       logout: () => {
-        localStorage.removeItem('token')
+        localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY)
         set({ user: null, token: null })
       },
     }),

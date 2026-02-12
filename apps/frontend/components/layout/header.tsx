@@ -2,12 +2,13 @@
 
 import { BellIcon } from '@heroicons/react/24/outline'
 import { UserMenu } from './user-menu'
+import { TITLES } from '@/constants/titles'
 
 export function Header() {
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
       <div className="flex items-center gap-4">
-        <h2 className="text-lg font-semibold text-gray-800">Dashboard</h2>
+        <h2 className="text-lg font-semibold text-gray-800">{TITLES.PAGE.DASHBOARD}</h2>
       </div>
 
       <div className="flex items-center gap-4">

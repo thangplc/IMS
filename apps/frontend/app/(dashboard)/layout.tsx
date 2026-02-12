@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/auth-store'
 import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Loading } from '@/components/ui/loading'
+import { MESSAGES } from '@/constants/messages'
 
 export default function DashboardLayout({
   children,
@@ -32,7 +33,7 @@ export default function DashboardLayout({
 
   // Show loading while waiting for hydration
   if (!hasHydrated) {
-    return <Loading fullscreen text="Đang tải..." size="lg" />
+    return <Loading fullscreen text={MESSAGES.LOADING.DEFAULT} size="lg" />
   }
 
   // After hydration, if no user, return null (useEffect will redirect)

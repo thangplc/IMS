@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useAuthStore } from '@/store/auth-store'
 import { useLogout } from '@/hooks/use-auth'
+import { LABELS } from '@/constants/labels'
 
 export function UserMenu() {
   const [isOpen, setIsOpen] = useState(false)
@@ -68,11 +69,11 @@ export function UserMenu() {
             <div className="p-2">
               <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                 <UserCircleIcon className="h-5 w-5 text-gray-500" />
-                <span className="font-medium">Profile</span>
+                <span className="font-medium">{LABELS.AUTH.PROFILE}</span>
               </button>
               <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                 <Cog6ToothIcon className="h-5 w-5 text-gray-500" />
-                <span className="font-medium">Settings</span>
+                <span className="font-medium">{LABELS.AUTH.SETTINGS}</span>
               </button>
             </div>
 
@@ -83,7 +84,7 @@ export function UserMenu() {
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                Đăng xuất
+                {LABELS.AUTH.LOGOUT}
               </button>
             </div>
           </div>

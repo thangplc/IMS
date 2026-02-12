@@ -1,7 +1,9 @@
 import axios from 'axios'
+import { API_CONFIG, AUTH_CONFIG } from '@/config'
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: API_CONFIG.BASE_URL,
+  timeout: API_CONFIG.TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,7 +12,7 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

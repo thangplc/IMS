@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useLogin } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,13 +20,14 @@ import {
   ArrowPathIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
+import { MESSAGES } from "@/constants/messages";
+import { LABELS } from "@/constants/labels";
 
 interface LoginFormProps {
   onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
-  const router = useRouter();
   const login = useLogin();
 
   const [formData, setFormData] = useState({
@@ -42,15 +42,15 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = "Email là bắt buộc";
+      newErrors.email = MESSAGES.VALIDATION.EMAIL_REQUIRED;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email không hợp lệ";
+      newErrors.email = MESSAGES.VALIDATION.EMAIL_INVALID;
     }
 
     if (!formData.password) {
-      newErrors.password = "Mật khẩu là bắt buộc";
+      newErrors.password = MESSAGES.VALIDATION.PASSWORD_REQUIRED;
     } else if (formData.password.length < 8) {
-      newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
+      newErrors.password = MESSAGES.VALIDATION.PASSWORD_MIN_LENGTH;
     }
 
     setFieldErrors(newErrors);
@@ -126,7 +126,7 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
       <div className="space-y-4">
         {/* Email Field */}
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{LABELS.AUTH.EMAIL}</Label>
           <Input
             id="email"
             name="email"
@@ -153,7 +153,7 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
 
         {/* Password Field */}
         <div>
-          <Label htmlFor="password">Mật khẩu</Label>
+          <Label htmlFor="password">{LABELS.AUTH.PASSWORD}</Label>
           <Input
             id="password"
             name="password"
@@ -212,8 +212,8 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
                   onClick={handleRetry}
                   className="mt-3 flex items-center gap-2 text-sm font-medium hover:underline"
                 >
-                  <ArrowPathIcon className="h-4 w-4" />
-                  Thử lại
+              <ArrowPathIcon className="h-4 w-4" />
+              {MESSAGES.COMMON.RETRY}
                 </button>
               )}
             </div>
@@ -222,7 +222,7 @@ export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
 
       {/* Submit Button */}
       <Button type="submit" className="w-full" disabled={login.isPending}>
-        Đăng nhập
+        {LABELS.AUTH.LOGIN}
       </Button>
     </form>
   );
