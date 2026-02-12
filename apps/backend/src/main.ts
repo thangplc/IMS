@@ -10,8 +10,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   // CORS
+  const isDevelopment = process.env.NODE_ENV === 'development';
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: isDevelopment
+      ? true
+      : process.env.CORS_ORIGIN || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
