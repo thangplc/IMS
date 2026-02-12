@@ -1,74 +1,129 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useLogin } from '@/hooks/use-auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLogin } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  parseError,
+  getErrorDisplayInfo,
+  logError,
+  type AppError,
+} from "@/lib/error-handler";
+import {
+  ExclamationTriangleIcon,
+  ShieldExclamationIcon,
+  WifiIcon,
+  ServerIcon,
+  ClockIcon,
+  ArrowPathIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/24/outline";
 
-export function LoginForm() {
-  const router = useRouter()
-  const login = useLogin()
-  
+interface LoginFormProps {
+  onLoadingChange?: (isLoading: boolean) => void;
+}
+
+export function LoginForm({ onLoadingChange }: LoginFormProps = {}) {
+  const router = useRouter();
+  const login = useLogin();
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [success, setSuccess] = useState(false)
+    email: "",
+    password: "",
+  });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [errorState, setErrorState] = useState<AppError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email là bắt buộc'
+      newErrors.email = "Email là bắt buộc";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email không hợp lệ'
+      newErrors.email = "Email không hợp lệ";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Mật khẩu là bắt buộc'
+      newErrors.password = "Mật khẩu là bắt buộc";
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Mật khẩu phải có ít nhất 8 ký tự'
+      newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setFieldErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleRetry = () => {
+    setErrorState(null);
+    setRetryCount((prev) => prev + 1);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
+    // Notify parent that loading started
+    onLoadingChange?.(true);
+
     try {
-      const result = await login.mutateAsync(formData)
-      console.log('✅ Login successful in form:', result)
-      
-      // Show success message
-      setSuccess(true)
-      setErrors({})
-      
-      // Wait longer for persist middleware to save to localStorage
+      const result = await login.mutateAsync(formData);
+      console.log("✅ Login successful in form:", result);
+
+      // Clear errors
+      setErrorState(null);
+      setFieldErrors({});
+
+      // Short delay for persist middleware to save to localStorage
       setTimeout(() => {
-        console.log('🔄 Redirecting to dashboard...')
-        console.log('📍 Current localStorage:', localStorage.getItem('auth-storage'))
-        window.location.href = '/dashboard'
-      }, 1500)
-    } catch (error: any) {
-      console.error('❌ Login failed:', error)
-      const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại'
-      setErrors({ submit: errorMessage })
-      setSuccess(false)
+        console.log("🔄 Redirecting to dashboard...");
+        console.log(
+          "📍 Current localStorage:",
+          localStorage.getItem("auth-storage"),
+        );
+        window.location.href = "/dashboard";
+      }, 800);
+    } catch (error: unknown) {
+      // Parse error using utility
+      const parsedError = parseError(error);
+
+      // Log error for debugging
+      logError(parsedError, "Login");
+
+      // Set error state
+      setErrorState(parsedError);
+
+      // Notify parent that loading ended
+      onLoadingChange?.(false);
     }
-  }
+  };
+
+  const getErrorIcon = (iconType: string) => {
+    switch (iconType) {
+      case "wifi":
+        return <WifiIcon className="h-5 w-5" />;
+      case "server":
+        return <ServerIcon className="h-5 w-5" />;
+      case "shield":
+        return <ShieldExclamationIcon className="h-5 w-5" />;
+      case "clock":
+        return <ClockIcon className="h-5 w-5" />;
+      case "question":
+        return <QuestionMarkCircleIcon className="h-5 w-5" />;
+      default:
+        return <ExclamationTriangleIcon className="h-5 w-5" />;
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-      <div className="space-y-4 rounded-md shadow-sm">
+      <div className="space-y-4">
         {/* Email Field */}
         <div>
           <Label htmlFor="email">Email</Label>
@@ -79,14 +134,20 @@ export function LoginForm() {
             autoComplete="email"
             required
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
+            onChange={(e) => {
+              setFormData({ ...formData, email: e.target.value });
+              setErrorState(null); // Clear errors on input
+            }}
+            className={
+              fieldErrors.email ? "border-red-500 focus:border-red-500" : ""
             }
-            className={errors.email ? 'border-red-500' : ''}
             placeholder="admin@ims.com"
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+          {fieldErrors.email && (
+            <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              {fieldErrors.email}
+            </p>
           )}
         </div>
 
@@ -100,42 +161,69 @@ export function LoginForm() {
             autoComplete="current-password"
             required
             value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
+            onChange={(e) => {
+              setFormData({ ...formData, password: e.target.value });
+              setErrorState(null); // Clear errors on input
+            }}
+            className={
+              fieldErrors.password ? "border-red-500 focus:border-red-500" : ""
             }
-            className={errors.password ? 'border-red-500' : ''}
             placeholder="••••••••"
           />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+          {fieldErrors.password && (
+            <p className="mt-1.5 text-sm text-red-600 flex items-center gap-1">
+              <ExclamationTriangleIcon className="h-4 w-4" />
+              {fieldErrors.password}
+            </p>
           )}
         </div>
       </div>
 
-      {/* Success Message */}
-      {success && (
-        <div className="rounded-md bg-green-50 p-4">
-          <p className="text-sm text-green-800">
-            ✅ Đăng nhập thành công! Đang chuyển hướng...
-          </p>
-        </div>
-      )}
-
-      {/* Submit Error */}
-      {errors.submit && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{errors.submit}</p>
-        </div>
-      )}
+      {/* Error Alert */}
+      {errorState &&
+        (() => {
+          const displayInfo = getErrorDisplayInfo(errorState);
+          return (
+            <div
+              className={`rounded-lg border p-4 ${displayInfo.bgClass} animate-in fade-in-50 slide-in-from-top-2 duration-300`}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  {getErrorIcon(displayInfo.icon)}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{errorState.message}</p>
+                  {errorState.type === "rate_limit" && (
+                    <p className="mt-1 text-xs opacity-80">
+                      Để bảo vệ hệ thống, chúng tôi tạm thời giới hạn số lần
+                      đăng nhập.
+                    </p>
+                  )}
+                  {errorState.type === "network" && (
+                    <p className="mt-1 text-xs opacity-80">
+                      Kiểm tra: WiFi/4G đang bật, không bật chế độ máy bay.
+                    </p>
+                  )}
+                </div>
+              </div>
+              {errorState.canRetry && (
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  className="mt-3 flex items-center gap-2 text-sm font-medium hover:underline"
+                >
+                  <ArrowPathIcon className="h-4 w-4" />
+                  Thử lại
+                </button>
+              )}
+            </div>
+          );
+        })()}
 
       {/* Submit Button */}
-      <Button
-        type="submit"
-        className="w-full"
-        isLoading={login.isPending}
-      >
-        {login.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+      <Button type="submit" className="w-full" disabled={login.isPending}>
+        Đăng nhập
       </Button>
     </form>
-  )
+  );
 }

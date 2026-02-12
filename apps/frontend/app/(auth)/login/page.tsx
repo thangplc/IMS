@@ -1,43 +1,87 @@
-'use client'
+"use client";
 
-import { LoginForm } from '@/components/forms/login-form'
+import { useState } from "react";
+import { LoginForm } from "@/components/forms/login-form";
+import { LoadingOverlay } from "@/components/ui/loading";
+import { CubeIcon } from "@heroicons/react/24/solid";
+import {
+  ShieldCheckIcon,
+  ChartBarIcon,
+  CubeTransparentIcon,
+} from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        {/* Logo & Title */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">IMS</h1>
-          <h2 className="mt-6 text-2xl font-semibold text-gray-900">
-            Đăng nhập vào hệ thống
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Quản lý kho hàng hiệu quả
-          </p>
-        </div>
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 py-12 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-400/20 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-400/20 blur-3xl" />
+      </div>
 
-        {/* Login Form */}
-        <LoginForm />
+      <div className="relative w-full max-w-md">
+        {/* Loading Overlay */}
+        {isLoading && (
+          <LoadingOverlay text="Đang xác thực..." size="md" />
+        )}
+        
+        {/* Login Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8">
+          {/* Logo & Title */}
+          <div className="text-center space-y-6">
+            {/* Logo */}
+            <div className="flex justify-center">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl blur-lg opacity-50" />
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-xl">
+                  <CubeIcon className="h-12 w-12 text-white" />
+                </div>
+              </div>
+            </div>
 
-        {/* Demo Credentials */}
-        <div className="rounded-md bg-blue-50 p-4">
-          <h3 className="text-sm font-medium text-blue-800">
-            Demo Credentials:
-          </h3>
-          <ul className="mt-2 space-y-1 text-xs text-blue-700">
-            <li>
-              <strong>Admin:</strong> admin@ims.com / Admin@123
-            </li>
-            <li>
-              <strong>Manager:</strong> manager@ims.com / Manager@123
-            </li>
-            <li>
-              <strong>Staff:</strong> staff@ims.com / Staff@123
-            </li>
-          </ul>
+            {/* Title */}
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                IMS
+              </h1>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Đăng nhập vào hệ thống
+              </h2>
+              <p className="text-sm text-gray-600">
+                Inventory Management System
+              </p>
+            </div>
+          </div>
+
+          {/* Login Form */}
+          <LoginForm onLoadingChange={setIsLoading} />
+
+          {/* Features */}
+          <div className="pt-6 border-t border-gray-200">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="space-y-2">
+                <div className="flex justify-center">
+                  <ShieldCheckIcon className="h-6 w-6 text-blue-600" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">Bảo mật</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-center">
+                  <ChartBarIcon className="h-6 w-6 text-blue-600" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">Báo cáo</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-center">
+                  <CubeTransparentIcon className="h-6 w-6 text-blue-600" />
+                </div>
+                <p className="text-xs text-gray-600 font-medium">Theo dõi</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
